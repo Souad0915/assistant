@@ -1,0 +1,51 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inscription</title>
+    <!-- Lien vers le fichier CSS -->
+    <link rel="stylesheet" href="{% static 'css/ins.css' %}">
+</head>
+<body>
+    <div class="register-container">
+        <h2>Créez votre compte</h2>
+        {% if messages %}
+        <ul>
+            {% for message in messages %}
+                <li class="message">{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+        <!-- Formulaire d'inscription -->
+        <form method="POST" action="{% url 'inscription' %}">
+            
+            {% csrf_token %}
+            <label for="nom">Nom</label>
+            <div class="input-group">
+                <input type="text" id="nom" name="nom" required>
+            </div>
+            
+            <label for="email">Email</label>
+            <div class="input-group">
+                <span>@</span>
+                <input type="email" id="email" name="email" required>
+            </div>
+            
+            <label for="password">Mot de passe</label>
+            <div class="input-group">
+                <input type="password" id="password" name="password" required>
+            </div>
+            
+            <label for="confirm-password">Confirmer le mot de passe</label>
+            <div class="input-group">
+                <input type="password" id="confirm-password" name="confirm-password" required>
+            </div>
+            
+            <button type="submit">S'inscrire</button>
+        </form>
+        <p>Vous avez déjà un compte ? <a href="{% url 'connexion' %}">Connectez-vous</a></p>
+    </div>
+</body>
+</html>

@@ -1,0 +1,309 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+
+    <title>Accueil - Assistant Virtuel Bootstrap Template</title>
+    <meta content="" name="description">
+    <meta content="" name="keywords">
+
+    <link href="{% static 'assets/img/favicon.png' %}" rel="icon">
+    <link href="{% static 'assets/img/apple-touch-icon.png' %}" rel="apple-touch-icon">
+
+    <link href="https://fonts.gstatic.com" rel="preconnect">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
+
+    <link href="{% static 'assets/vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+    <link href="{% static 'assets/vendor/bootstrap-icons/bootstrap-icons.css' %}" rel="stylesheet">
+    <link href="{% static 'assets/vendor/boxicons/css/boxicons.min.css' %}" rel="stylesheet">
+    <link href="{% static 'assets/vendor/quill/quill.snow.css' %}" rel="stylesheet">
+    <link href="{% static 'assets/vendor/quill/quill.bubble.css' %}" rel="stylesheet">
+    <link href="{% static 'assets/vendor/remixicon/remixicon.css' %}" rel="stylesheet">
+    <link href="{% static 'assets/vendor/simple-datatables/style.css' %}" rel="stylesheet">
+
+    <link href="{% static 'css/style.css' %}? v=3" rel="stylesheet">
+
+    <style>
+        .hero {
+            background-color: #f8f9fa; /* Couleur de fond claire */
+            padding: 80px 0;
+            text-align: center;
+        }
+
+        .hero-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .hero-title {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .hero-subtitle {
+            font-size: 1.2rem;
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        .features {
+            padding: 60px 0;
+            background-color: #fff;
+        }
+
+        .feature-item {
+            text-align: center;
+            padding: 30px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .feature-item i {
+            font-size: 3rem; /* Grands icônes */
+            color: #007bff; /* Couleur primaire */
+            margin-bottom: 15px;
+        }
+
+        .feature-item h3 {
+            font-size: 1.5rem;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .feature-item p {
+            color: #666;
+        }
+
+        /* Styles pour le texte défilant (si vous souhaitez le conserver) */
+        .center-container {
+            width: 100%;
+            overflow: hidden; /* Important pour cacher le texte qui dépasse */
+            white-space: nowrap; /* Empêche le texte de passer à la ligne */
+            margin-bottom: 40px; /* Ajout de marge en bas */
+        }
+
+        .scrolling-text {
+            display: inline-block; /* Permet au texte de défiler horizontalement */
+            padding-left: 100%; /* Démarre le texte à droite de l'écran */
+            animation: scroll-left 15s linear infinite; /* Animation de défilement */
+        }
+
+        @keyframes scroll-left {
+            0% {
+                transform: translateX(0%); /* Début à droite */
+            }
+            100% {
+                transform: translateX(-100%); /* Fin à gauche */
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header id="header" class="header fixed-top d-flex align-items-center">
+
+        <div class="d-flex align-items-center justify-content-between">
+            <a href="{% url 'index' %}" class="logo d-flex align-items-center">
+                <img src="{% static 'assets/img/logo.png' %}" alt="">
+                <span class="d-none d-lg-block">Assistant Virtuel</span>
+            </a>
+            <i class="bi bi-list toggle-sidebar-btn"></i>
+        </div><div class="search-bar">
+            <form class="search-form d-flex align-items-center" method="GET" action="{% url 'global_search' %}">
+                {% csrf_token %}
+                <input type="text" name="query" placeholder="Rechercher..." title="Entrez un mot-clé">
+                <input type="hidden" name="table" value="ressources"> <button type="submit" title="Rechercher"><i class="bi bi-search"></i></button>
+            </form>
+        </div><nav class="header-nav ms-auto">
+            <ul class="d-flex align-items-center">
+
+                <li class="nav-item d-block d-lg-none">
+                    <a class="nav-link nav-icon search-bar-toggle " href="#">
+                        <i class="bi bi-search"></i>
+                    </a>
+                </li><li class="nav-item dropdown">
+                    <a class="nav-link nav-icon" href="#" data-bs-toggle="dropdown">
+                        <i class="bi bi-bell"></i>
+                        <span class="badge bg-primary badge-number">{{ notifications|length }}</span>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow notifications">
+                        <li class="dropdown-header">
+                            Vous avez {{ notifications|length }} nouvelle{{ notifications|length|pluralize }} notification{{ notifications|length|pluralize }}
+
+                        </li>
+                        <li><hr class="dropdown-divider"></li>
+
+                        {% if notifications %}
+                            {% for notification in notifications %}
+                                <li class="notification-item">
+                                    <i class="bi bi-bell text-primary"></i> <div>
+                                        <h4>{{ notification.message }}</h4>
+                                        <p class="small text-muted">{{ notification.created_at|date:"d/m/Y H:i" }}</p>
+                                    </div>
+                                </li>
+                                <li><hr class="dropdown-divider"></li>
+                            {% endfor %}
+                        {% else %}
+                            <li class="dropdown-item text-center">
+                                <em>Aucune nouvelle notification</em>
+                            </li>
+                        {% endif %}
+
+
+                    </ul>
+                </li><li class="nav-item dropdown pe-3">
+
+                    <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
+                        <img src="{{ request.user.photo.url }}" alt="Profile" class="rounded-circle">
+                        <span class="d-none d-md-block dropdown-toggle ps-2">{{ request.user.nom }}</span>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
+                        <li class="dropdown-header">
+                            <h6>{{ request.user.nom }}</h6>
+                            <span>{{ request.user.fonction }}</span>
+                        </li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+
+
+                        <li>
+                            <a class="dropdown-item d-flex align-items-center" href="{% url 'users-profile' %}">
+                                <i class="bi bi-person"></i>
+                                <span>Mon profil</span>
+                            </a>
+                        </li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+
+
+                        <li>
+                            <a class="dropdown-item d-flex align-items-center" href="{% url 'deconnexion' %}">
+                                <i class="bi bi-box-arrow-right"></i>
+                                <span>Se déconnecter</span>
+                            </a>
+                        </li>
+
+                    </ul></li></ul>
+        </nav></header><aside id="sidebar" class="sidebar">
+        <ul class="sidebar-nav" id="sidebar-nav">
+
+            <li class="nav-item">
+                <a class="nav-link " href="{% url 'index' %}">
+                    <i class="bi bi-grid"></i>
+                    <span>Accueil</span>
+                </a>
+            </li><li class="nav-item">
+                <a class="nav-link collapsed" href="{% url 'ressources' %}">
+                    <i class="bi bi-menu-button-wide"></i><span>Ressources</span>
+                </a>
+            </li><li class="nav-item">
+                <a class="nav-link collapsed" href="{% url 'planning' %}">
+                    <i class="bi bi-menu-button-wide"></i><span>planning</span>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a href="http://localhost:8501" target="_blank" class="nav-link collapsed">
+                    <i class="bi bi-menu-button-wide"></i>
+                    <span>Suivi</span>
+                </a>
+            </li>
+
+            <li class="nav-heading">Pages</li>
+
+            <li class="nav-item">
+                <a class="nav-link collapsed" href="{% url 'users-profile' %}">
+                    <i class="bi bi-person-circle"></i><span>Profil</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link collapsed" href="{% url 'pages-faq' %}">
+                    <i class="bi bi-question-circle"></i>
+                    <span>F.A.Q</span>
+                </a>
+            </li></ul>
+    </aside><main id="main" class="main">
+
+        <div class="pagetitle">
+            <h1>Accueil</h1>
+            <nav>
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'index' %}">Home</a></li>
+                    <li class="breadcrumb-item active">Accueil</li>
+                </ol>
+            </nav>
+        </div><section class="section dashboard" id="content">
+            <div class="hero">
+                <div class="hero-content">
+                    <h1 class="hero-title">Bienvenue dans l'Assistant Virtuel des Enseignants</h1>
+                    <p class="hero-subtitle">Votre outil pour une gestion scolaire simplifiée et efficace.</p>
+                </div>
+            </div>
+
+            <div class="center-container">
+                <div class="scrolling-text">
+                    <h2>Explorez les fonctionnalités pour optimiser votre quotidien d'enseignant !</h2>
+                </div>
+            </div>
+
+            <div class="features container">
+                <div class="row">
+                    <div class="col-lg-4 col-md-6 feature-item">
+                        <i class="bi bi-book-half"></i>
+                        <h3>Ressources Pédagogiques</h3>
+                        <p>Accédez à une bibliothèque complète de documents, de supports de cours et d'outils pour enrichir vos leçons.</p>
+                    </div>
+                    <div class="col-lg-4 col-md-6 feature-item">
+                        <i class="bi bi-calendar-event"></i>
+                        <h3>Planification Simplifiée</h3>
+                        <p>Organisez vos emplois du temps, vos activités et vos événements scolaires de manière intuitive et efficace.</p>
+                    </div>
+                    <div class="col-lg-4 col-md-6 feature-item">
+                        <i class="bi bi-graph-up"></i>
+                        <h3>Suivi des Progrès</h3>
+                        <p>Visualisez l'évolution des apprentissages, analysez les performances et identifiez les besoins de vos élèves.</p>
+                    </div>
+                    <div class="col-lg-4 col-md-6 feature-item">
+                        <i class="bi bi-person-circle"></i>
+                        <h3>Gestion du Profil</h3>
+                        <p>Personnalisez votre espace, gérez vos informations et configurez vos préférences.</p>
+                    </div>
+                    <div class="col-lg-4 col-md-6 feature-item">
+                        <i class="bi bi-question-circle"></i>
+                        <h3>Support et F.A.Q.</h3>
+                        <p>Trouvez des réponses à vos questions et accédez à une assistance pour une utilisation optimale de l'assistant.</p>
+                    </div>
+                    <div class="col-lg-4 col-md-6 feature-item">
+                        <i class="bi bi-bell"></i>
+                        <h3>Notifications Intelligentes</h3>
+                        <p>Restez informé des dernières mises à jour, des rappels importants et des événements à venir.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main><a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+
+    <script src="{% static 'assets/vendor/apexcharts/apexcharts.min.js' %}"></script>
+    <script src="{% static 'assets/vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'assets/vendor/chart.js/chart.umd.js' %}"></script>
+    <script src="{% static 'assets/vendor/echarts/echarts.min.js' %}"></script>
+    <script src="{% static 'assets/vendor/quill/quill.js' %}"></script>
+    <script src="{% static 'assets/vendor/simple-datatables/simple-datatables.js' %}"></script>
+    <script src="{% static 'assets/vendor/tinymce/tinymce.min.js' %}"></script>
+    <script src="{% static 'assets/vendor/php-email-form/validate.js' %}"></script>
+
+    <script src="{% static 'assets/js/main.js' %}"></script>
+
+</body>
+
+</html>

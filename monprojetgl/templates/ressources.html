@@ -1,0 +1,355 @@
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+
+    <title>Ressources et Événements - Assistante Virtuel</title>
+    <meta content="" name="description">
+    <meta content="" name="keywords">
+
+    <link href="{% static 'assets/img/favicon.png' %}" rel="icon">
+    <link href="{% static 'assets/img/apple-touch-icon.png' %}" rel="apple-touch-icon">
+
+    <link href="https://fonts.gstatic.com" rel="preconnect">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
+
+    <link href="{% static 'assets/vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+    <link href="{% static 'assets/vendor/bootstrap-icons/bootstrap-icons.css' %}" rel="stylesheet">
+    <link href="{% static 'assets/vendor/boxicons/css/boxicons.min.css' %}" rel="stylesheet">
+    <link href="{% static 'assets/vendor/quill/quill.snow.css' %}" rel="stylesheet">
+    <link href="{% static 'assets/vendor/quill/quill.bubble.css' %}" rel="stylesheet">
+    <link href="{% static 'assets/vendor/remixicon/remixicon.css' %}" rel="stylesheet">
+    <link href="{% static 'assets/vendor/simple-datatables/style.css' %}" rel="stylesheet">
+
+    <link href="{% static 'css/style.css' %}" rel="stylesheet">
+    <meta name="csrf-token" content="{{ csrf_token }}">
+    </head>
+
+<body>
+    <script>
+        // Fonction pour récupérer le token CSRF
+        function getCSRFToken() {
+            const cookies = document.cookie.split(';');
+            for (let cookie of cookies) {
+                const [name, value] = cookie.trim().split('=');
+                if (name === 'csrftoken') {
+                    return decodeURIComponent(value);
+                }
+            }
+            return '';
+        }
+        </script>
+    <header id="header" class="header fixed-top d-flex align-items-center">
+
+        <div class="d-flex align-items-center justify-content-between">
+            <a href="{% url 'index' %}" class="logo d-flex align-items-center">
+                <img src="{% static 'assets/img/logo.png' %}" alt="">
+                <span class="d-none d-lg-block"> Assistant Virtuel</span>
+            </a>
+            <i class="bi bi-list toggle-sidebar-btn"></i>
+        </div>
+        <div class="search-bar">
+            <form class="search-form d-flex align-items-center" method="GET" action="{% url 'global_search' %}">
+                {% csrf_token %}
+                <input type="text" name="query" placeholder="Rechercher..." title="Entrez un mot-clé">
+                <input type="hidden" name="table" value="ressources">  <!-- <- ici -->
+                <button type="submit" title="Rechercher"><i class="bi bi-search"></i></button>
+            </form>
+        </div>
+        <nav class="header-nav ms-auto">
+            <ul class="d-flex align-items-center">
+              
+                <li class="nav-item d-block d-lg-none">
+                    
+                    <a class="nav-link nav-icon search-bar-toggle" href="#" 
+                       data-bs-toggle="modal" data-bs-target="#searchModal">
+                        <i class="bi bi-search"></i>
+                    </a>
+                </li>
+
+                <li class="nav-item dropdown">
+                    <a class="nav-link nav-icon d-flex align-items-center" href="#" id="notificationIcon" data-bs-toggle="dropdown" data-bs-auto-close="outside">
+                        <i class="bi bi-bell"></i>
+                        <span class="badge bg-primary badge-number ms-2" id="notificationCount">{{ notifications|length }}</span>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-arrow notifications" id="notificationList" style="left: auto; right: 0;">
+                        <li class="dropdown-header">
+                            Vous avez {{ notifications|length }} nouvelle{{ notifications|length|pluralize }} notification{{ notifications|length|pluralize }}
+                        </li>
+                        <li><hr class="dropdown-divider"></li>
+                
+                        {% if notifications %}
+                            {% for notification in notifications %}
+                                <li class="notification-item" id="notification-{{ notification.id }}">
+                                    <i class="bi bi-bell text-primary"></i>
+                                    <div>
+                                        <h4>{{ notification.message }}</h4>
+                                        <p class="small text-muted">{{ notification.created_at|date:"d/m/Y H:i" }}</p>
+                                    </div>
+                                </li>
+                                <li><hr class="dropdown-divider"></li>
+                            {% endfor %}
+                        {% else %}
+                            <li class="dropdown-item text-center">
+                                <em>Aucune nouvelle notification</em>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </li>
+                
+                <li class="nav-item dropdown pe-3">
+
+                    <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
+                        <img src="{{ request.user.photo.url }}" alt="Profile" class="rounded-circle">
+                        <span class="d-none d-md-block dropdown-toggle ps-2">{{ request.user.nom }}</span>
+                    </a><ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
+                      <li class="dropdown-header">
+                          <h6>{{ request.user.nom }}</h6>
+                          <span>{{ request.user.fonction }}</span>
+                      </li>
+                      <li>
+                          <hr class="dropdown-divider">
+                      </li>
+
+                      <li>
+                          <a class="dropdown-item d-flex align-items-center" href="{% url 'users-profile' %}">
+                              <i class="bi bi-person"></i>
+                              <span>Mon profil</span>
+                          </a>
+                      </li>
+                      <li>
+                          <hr class="dropdown-divider">
+                      </li>
+
+
+                      <li>
+                          <a class="dropdown-item d-flex align-items-center" href="{% url 'deconnexion' %}">
+                              <i class="bi bi-box-arrow-right"></i>
+                              <span>Se déconnecter</span>
+                          </a>
+                      </li>
+
+                  </ul>
+              </li>
+
+          </ul>
+      </nav>
+
+  </header>
+
+  <aside id="sidebar" class="sidebar">
+      <ul class="sidebar-nav" id="sidebar-nav">
+
+          <li class="nav-item">
+              <a class="nav-link " href="{% url 'index' %}">
+                  <i class="bi bi-grid"></i>
+                  <span>Accueil</span>
+              </a>
+          </li>
+
+          <li class="nav-item">
+              <a class="nav-link collapsed" href="{% url 'ressources' %}">
+                  <i class="bi bi-menu-button-wide"></i><span>Ressources</span>
+              </a>
+          </li>
+
+          <li class="nav-item">
+              <a class="nav-link collapsed" href="{% url 'planning' %}">
+                  <i class="bi bi-menu-button-wide"></i><span>planning</span>
+              </a>
+          </li>
+
+          <li class="nav-item">
+              <a href="http://localhost:8501" target="_blank" class="nav-link collapsed">
+                  <i class="bi bi-menu-button-wide"></i>
+                  <span>Suivi</span>
+              </a>
+          </li>
+
+          <li class="nav-heading">Pages</li>
+
+          <li class="nav-item">
+              <a class="nav-link collapsed" href="{% url 'users-profile' %}">
+                  <i class="bi bi-menu-button-wide"></i><span>Profil</span>
+              </a>
+          </li>
+          <li class="nav-item">
+              <a class="nav-link collapsed" href="{% url 'pages-faq' %}">
+                  <i class="bi bi-question-circle"></i>
+                  <span>F.A.Q</span>
+              </a>
+          </li>
+
+
+      </ul>
+  </aside>
+
+  <main id="main" class="main">
+
+      <div class="pagetitle">
+          <h1>Ressources et Événements</h1>
+          <nav>
+              <ol class="breadcrumb">
+                  <li class="breadcrumb-item"><a href="{% url 'index' %}">Home</a></li>
+
+                  <li class="breadcrumb-item active">Ressources et Événements</li>
+              </ol>
+          </nav>
+      </div>
+
+      <section class="section">
+          <div class="row">
+              <div class="col-lg-6">
+                  <div class="card">
+                      <div class="card-body">
+                          <h5 class="card-title">Ajouter une ressource</h5>
+
+                          <form id="ressourceForm"   method="POST" action="{% url 'enregistrer_ressource' %}"  class="row g-3" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <div class="col-12">
+                                <label for="nomCours" class="form-label">Nom du cours</label>
+                                <input type="text" class="form-control" id="nomCours" name="nomCours" required>
+                            </div>
+                        
+                            <div class="col-12">
+                                <label for="descriptionCours" class="form-label">Description</label>
+                                <textarea class="form-control" id="descriptionCours" name="descriptionCours" rows="3" required></textarea>
+                            </div>
+                        
+                            <div class="col-md-6">
+                                <label for="dateCours" class="form-label">Date</label>
+                                <input type="date" class="form-control" id="dateCours" name="dateCours" required>
+                            </div>
+                        
+                            <div class="col-md-6">
+                                <label for="heureDebut" class="form-label">Heure début</label>
+                                <input type="time" class="form-control" id="heureDebut" name="heureDebut" required>
+                            </div>
+                        
+                            <div class="col-md-6">
+                                <label for="heureFin" class="form-label">Heure fin</label>
+                                <input type="time" class="form-control" id="heureFin" name="heureFin" required>
+                            </div>
+                        
+                            <div class="col-12">
+                                <label for="fichierCours" class="form-label">Téleverser fichier</label>
+                                <input type="file" class="form-control" id="fichierCours" name="fichierCours">
+                            </div>
+                        
+                            <div class="text-center">
+                                <button type="submit" name="enregistrer_ressource" class="btn btn-primary">Soumettre</button>
+                            </div>
+                        </form>
+                        
+                      </div>
+                  </div>
+              </div>
+
+              <div class="col-lg-6">
+                  <div class="card">
+                      <div class="card-body">
+                          <h5 class="card-title">Ajouter un événement</h5>
+
+                          <form id="evenementForm" class="row g-3" method="POST" action="{% url 'ajouter_evenement' %}">
+                            {% csrf_token %}
+                            
+                            <div class="col-12">
+                                <label for="titreEvenement" class="form-label">Titre</label>
+                                <input type="text" class="form-control" name="titreEvenement" required>
+                            </div>
+                        
+                            <div class="col-12">
+                                <label for="descriptionEvenement" class="form-label">Description</label>
+                                <textarea class="form-control" name="descriptionEvenement" rows="3" required></textarea>
+                            </div>
+                        
+                            <div class="col-md-6">
+                                <label for="heure" class="form-label">Heure</label>
+                                <input type="time" class="form-control" name="heure" required>
+                            </div>
+                        
+                            <div class="text-center">
+                                <button type="submit" name="ajouter_evenement" class="btn btn-primary">Soumettre</button>
+                            </div>
+                        </form>
+                      </div>
+                  </div>
+              </div>
+          </div>
+      </section>
+
+  </main>
+
+  <footer id="footer" class="footer">
+      <div class="copyright">
+          &copy; 2025 Votre Assistant Virtuel. Tous droits réservés.
+      </div>
+
+  </footer>
+
+  <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+
+  <script src="{% static 'assets/vendor/apexcharts/apexcharts.min.js' %}"></script>
+  <script src="{% static 'assets/vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+  <script src="{% static 'assets/vendor/chart.js/chart.umd.js' %}"></script>
+  <script src="{% static 'assets/vendor/echarts/echarts.min.js' %}"></script>
+  <script src="{% static 'assets/vendor/quill/quill.js' %}"></script>
+  <script src="{% static 'assets/vendor/simple-datatables/simple-datatables.js' %}"></script>
+  <script src="{% static 'assets/vendor/tinymce/tinymce.min.js' %}"></script>
+  <script src="{% static 'assets/vendor/php-email-form/validate.js' %}"></script>
+
+  <script src="{% static 'formulaire.js' %}"></script>
+
+  <script src="{% static 'assets/js/main.js' %}"></script>
+  <!-- Ajoutez ce script en haut de votre template -->
+
+  
+
+    
+                      
+    
+    <script>
+    $(document).ready(function() {
+        // Gestion de la recherche en temps réel
+        $('#searchInput').on('input', function() {
+            const query = $(this).val().trim();
+            if (query.length > 2) {
+                $.ajax({
+                    url: '{% url "global_search" %}',
+                    type: 'GET',
+                    data: {
+                        'query': query
+                    },
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'X-CSRFToken': getCSRFToken()
+                    },
+                    success: function(data) {
+                        $('#searchResults').html(data);
+                    },
+                    error: function(xhr) {
+                        console.error('Erreur recherche:', xhr.responseText);
+                    }
+                });
+            } else {
+                $('#searchResults').empty();
+            }
+        });
+    
+        // Gestion de la soumission du formulaire
+        $('#searchForm').on('submit', function(e) {
+            e.preventDefault();
+            const query = $('#searchInput').val().trim();
+            if (query) {
+                window.location.href = '{% url "global_search" %}?query=' + encodeURIComponent(query);
+            }
+        });
+    });
+    </script>
+</body>
+
+</html>

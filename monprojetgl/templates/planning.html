@@ -1,0 +1,307 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+
+    <title>Pages / Planning - Assistante Virtuel Bootstrap Template</title>
+    <meta content="" name="description">
+    <meta content="" name="keywords">
+
+    <link href="{% static 'assets/img/favicon.png' %}" rel="icon">
+    <link href="{% static 'assets/img/apple-touch-icon.png' %}" rel="apple-touch-icon">
+
+    <link href="https://fonts.gstatic.com" rel="preconnect">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
+
+    <link href="{% static 'assets/vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+    <link href="{% static 'assets/vendor/bootstrap-icons/bootstrap-icons.css' %}" rel="stylesheet">
+    <link href="{% static 'assets/vendor/boxicons/css/boxicons.min.css' %}" rel="stylesheet">
+    <link href="{% static 'assets/vendor/quill/quill.snow.css' %}" rel="stylesheet">
+    <link href="{% static 'assets/vendor/quill/quill.bubble.css' %}" rel="stylesheet">
+    <link href="{% static 'assets/vendor/remixicon/remixicon.css' %}" rel="stylesheet">
+    <link href="{% static 'assets/vendor/simple-datatables/style.css' %}" rel="stylesheet">
+
+    <link href="{% static 'css/style.css' %}" rel="stylesheet">
+
+</head>
+
+<body>
+
+    <header id="header" class="header fixed-top d-flex align-items-center">
+
+        <div class="d-flex align-items-center justify-content-between">
+            <a href="{% url 'index' %}" class="logo d-flex align-items-center">
+                <img src="{% static 'assets/img/logo.png' %}" alt="">
+                <span class="d-none d-lg-block"> Assistant Virtuel</span>
+            </a>
+            <i class="bi bi-list toggle-sidebar-btn"></i>
+        </div>
+
+        <div class="search-bar">
+            <form class="search-form d-flex align-items-center" method="GET" action="{% url 'global_search' %}">
+                {% csrf_token %}
+                <input type="text" name="query" placeholder="Rechercher..." title="Entrez un mot-clé">
+                <input type="hidden" name="table" value="ressources">  <!-- <- ici -->
+                <button type="submit" title="Rechercher"><i class="bi bi-search"></i></button>
+            </form>
+        </div>
+
+        <nav class="header-nav ms-auto">
+            <ul class="d-flex align-items-center">
+
+                <li class="nav-item d-block d-lg-none">
+                    <a class="nav-link nav-icon search-bar-toggle " href="#">
+                        <i class="bi bi-search"></i>
+                    </a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link nav-icon" href="#" data-bs-toggle="dropdown">
+                        <i class="bi bi-bell"></i>
+                        <span class="badge bg-primary badge-number">{{ notifications|length }}</span>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow notifications">
+                        <li class="dropdown-header">
+                            Vous avez {{ notifications|length }} nouvelle{{ notifications|length|pluralize }} notification{{ notifications|length|pluralize }}
+                           
+                        </li>
+                        <li><hr class="dropdown-divider"></li>
+                
+                        {% if notifications %}
+                            {% for notification in notifications %}
+                                <li class="notification-item">
+                                    <i class="bi bi-bell text-primary"></i> <!-- Icône par défaut -->
+                                    <div>
+                                        <h4>{{ notification.message }}</h4>
+                                        <p class="small text-muted">{{ notification.created_at|date:"d/m/Y H:i" }}</p>
+                                    </div>
+                                </li>
+                                <li><hr class="dropdown-divider"></li>
+                            {% endfor %}
+                        {% else %}
+                            <li class="dropdown-item text-center">
+                                <em>Aucune nouvelle notification</em>
+                            </li>
+                        {% endif %}
+                
+                        
+                    </ul>
+                </li>
+
+                <li class="nav-item dropdown pe-3">
+
+                    <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
+                        <img src="{{ request.user.photo.url }}" alt="Profile" class="rounded-circle">
+                        <span class="d-none d-md-block dropdown-toggle ps-2">{{ request.user.nom }}</span>
+                    </a><ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
+                      <li class="dropdown-header">
+                          <h6>{{ request.user.nom }}</h6>
+                          <span>{{ request.user.fonction }}</span>
+                      </li>
+                      <li>
+                          <hr class="dropdown-divider">
+                      </li>
+
+
+                        <li>
+                            <a class="dropdown-item d-flex align-items-center" href="{% url 'users-profile' %}">
+                                <i class="bi bi-person"></i>
+                                <span>Mon profil</span>
+                            </a>
+                        </li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+
+                        <li>
+                            <a class="dropdown-item d-flex align-items-center" href="{% url 'deconnexion' %}">
+                                <i class="bi bi-box-arrow-right"></i>
+                                <span>Se déconnecter</span>
+                            </a>
+                        </li>
+
+                    </ul>
+                </li>
+
+            </ul>
+        </nav>
+
+    </header>
+
+    <aside id="sidebar" class="sidebar">
+        <ul class="sidebar-nav" id="sidebar-nav">
+
+          <li class="nav-item">
+              <a class="nav-link " href="{% url 'index' %}">
+                  <i class="bi bi-grid"></i>
+                  <span>Accueil</span>
+              </a>
+          </li>
+
+          <li class="nav-item">
+              <a class="nav-link collapsed" href="{% url 'ressources' %}">
+                  <i class="bi bi-menu-button-wide"></i><span>Ressources</span>
+              </a>
+          </li>
+          <li class="nav-item">
+              <a class="nav-link collapsed" href="{% url 'planning' %}">
+                  <i class="bi bi-menu-button-wide"></i><span>planning</span>
+              </a>
+          </li>
+
+          <li class="nav-item">
+              <a href="http://localhost:8501" target="_blank" class="nav-link collapsed">
+                  <i class="bi bi-menu-button-wide"></i>
+                  <span>Suivi</span>
+              </a>
+          </li>
+
+          <li class="nav-heading">Pages</li>
+
+          <li class="nav-item">
+              <a class="nav-link collapsed" href="{% url 'users-profile' %}">
+                  <i class="bi bi-menu-button-wide"></i><span>Profil</span>
+              </a>
+          </li>
+          <li class="nav-item">
+              <a class="nav-link collapsed" href="{% url 'pages-faq' %}">
+                  <i class="bi bi-question-circle"></i>
+                  <span>F.A.Q</span>
+              </a>
+          </li>
+
+          
+
+      </ul>
+  </aside>
+
+  <main id="main" class="main">
+
+      <div class="pagetitle">
+          <h1>Planning</h1>
+          <nav>
+              <ol class="breadcrumb">
+                  <li class="breadcrumb-item"><a href="{% url 'index' %}">Home</a></li>
+
+                  <li class="breadcrumb-item active">Planning</li>
+              </ol>
+          </nav>
+      </div>
+
+      <section class="section planning">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Horaire hebdomadaire</h5>
+                        <p class="card-text">Voici votre emploi du temps personnel.</p>
+                        
+                        <div class="table-responsive">
+                            
+                            <table class="table table-bordered table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Matière</th>
+                                        <th>Salle</th>
+                                        <th>Jour</th>
+                                        <th>Heure de début</th>
+                                        <th>Heure de fin</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% if cours_list %}
+                                        {% for cours in cours_list %}
+                                            <tr>
+                                                <td>{{ cours.matiere }}</td>
+                                                <td>{{ cours.salle }}</td>
+                                                <td>{{ cours.jour }}</td>
+                                                <td>{{ cours.heure_debut|time:"H:i" }}</td>
+                                                <td>{{ cours.heure_fin|time:"H:i" }}</td>
+                                            </tr>
+                                        {% endfor %}
+                                    {% else %}
+                                        <tr>
+                                            <td colspan="5" class="text-center">Aucun cours trouvé pour votre compte.</td>
+                                        </tr>
+                                    {% endif %}
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+      <div class="modal fade" id="eventModal" tabindex="-1" aria-labelledby="eventModalLabel" aria-hidden="true">
+          <div class="modal-dialog">
+              <div class="modal-content">
+                  <div class="modal-header">
+                      <h5 class="modal-title" id="eventModalLabel">Ajouter un événement</h5>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+                      <form id="eventForm">
+                          <div class="mb-3">
+                              <label for="eventDay" class="form-label">Jour</label>
+                              <select class="form-select" id="eventDay" required>
+                                  <option value="Monday">Lundi</option>
+                                  <option value="Tuesday">Mardi</option>
+                                  <option value="Wednesday">Mercredi</option>
+                                  <option value="Thursday">Jeudi</option>
+                                  <option value="Friday">Vendredi</option>
+                                  <option value="Saturday">Samedi</option>
+                                  <option value="Sunday">Dimanche</option>
+                              </select>
+                          </div>
+                          <div class="mb-3">
+                              <label for="eventTime" class="form-label">Heure</label>
+                              <input type="time" class="form-control" id="eventTime" required>
+                          </div>
+                          <div class="mb-3">
+                              <label for="eventDescription" class="form-label">Description</label>
+                              <textarea class="form-control" id="eventDescription" rows="3" required></textarea>
+                          </div>
+                      </form>
+                  </div>
+                  <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+                      <button type="button" class="btn btn-primary" id="saveEventBtn">Enregistrer</button>
+                  </div>
+              </div>
+          </div>
+      </div>
+
+  </main>
+
+  <footer id="footer" class="footer">
+      <div class="copyright">
+          &copy; 2025 Votre Assistant Virtuel. Tous droits réservés.
+      </div>
+
+  </footer>
+
+  <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+
+  <script src="{% static 'assets/vendor/apexcharts/apexcharts.min.js' %}"></script>
+  <script src="{% static 'assets/vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+  <script src="{% static 'assets/vendor/chart.js/chart.umd.js' %}"></script>
+  <script src="{% static 'assets/vendor/echarts/echarts.min.js' %}"></script>
+  <script src="{% static 'assets/vendor/quill/quill.js' %}"></script>
+  <script src="{% static 'assets/vendor/simple-datatables/simple-datatables.js' %}"></script>
+  <script src="{% static 'assets/vendor/tinymce/tinymce.min.js' %}"></script>
+  <script src="{% static 'assets/vendor/php-email-form/validate.js' %}"></script>
+
+  <script src="{% static 'assets/js/main.js' %}"></script>
+
+  
+        </body>
+
+        </html>
+       
+
+      

@@ -1,0 +1,35 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connexion</title>
+    <!-- Lien vers le fichier CSS -->
+    <link rel="stylesheet" href="{% static 'css/co.css' %}">
+    <!-- Lien vers le favicon -->
+    <link rel="icon" href="{% static 'favicon.ico' %}" type="image/x-icon">
+</head>
+<body>
+    <div class="login-container">
+        <h2>Connectez-vous à votre compte</h2>
+        <!-- Formulaire de connexion -->
+        <form method="POST" action="">
+            {% csrf_token %}
+            <label for="email">Email</label>
+            <div class="input-group">
+                <span>@</span>
+                <input type="email" id="email" name="email" required>
+            </div>
+            
+            <label for="password">Mot de passe</label>
+            <div class="input-group">
+                <input type="password" id="password" name="password" required>
+            </div>
+            
+            <button type="submit">Se connecter</button>
+        </form>
+        <p>Vous n’avez pas de compte ? <a href="{% url 'inscription' %}">Inscrivez-vous</a></p>
+    </div>
+</body>
+</html>
