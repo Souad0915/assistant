@@ -1,1 +1,1 @@
-web: gunicorn assistant.wsgi
+web: gunicorn monprojet.wsgi
