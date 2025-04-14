@@ -1,4 +1,5 @@
 from pathlib import Path
+import django_heroku
 import pymysql
 from pathlib import Path
 
@@ -115,6 +116,7 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 STATIC_URL = 'static/'
 
@@ -160,3 +162,6 @@ DEFAULT_PROFILE_PICTURE = 'profile_pics/default.jpg'
 CSRF_COOKIE_HTTPONLY = True
 CSRF_COOKIE_SECURE = False  # Assurez-vous que cela est configuré correctement en fonction de votre environnement (True pour HTTPS).
 CSRF_COOKIE_NAME = 'csrftoken'
+
+
+django_heroku.settings(locals())
