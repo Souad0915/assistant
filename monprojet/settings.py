@@ -16,12 +16,15 @@ SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DEBUG', 'false').lower()=='true'
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '').split()
 
-ALLOWED_HOSTS = []
 render_hostname = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
 if render_hostname:
     ALLOWED_HOSTS.append(render_hostname)
 
+
+# Ajout manuel pour résoudre l'erreur
+ALLOWED_HOSTS.append('assistant-9-ed4n.onrender.com')
 
 # Application definition
 
@@ -75,13 +78,8 @@ WSGI_APPLICATION = 'monprojet.wsgi.application'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
 DATABASES = {
-    'default': dj_database_url.config(
-        default=os.environ.get('DATABASE_URL'),
-        conn_max_age=600,
-        conn_health_checks=True
-    )
+    'default': dj_database_url.config(default=os.environ.get('DATABASE_URL'))
 }
-
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
 
@@ -138,7 +136,7 @@ LOGIN_REDIRECT_URL = 'index'  # Redirige vers la page d'accueil après la connex
 LOGIN_URL = '/'  # Redirige vers la page de connexion si l'utilisateur n'est pas authentifié
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
+
 
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
