@@ -72,19 +72,12 @@ WSGI_APPLICATION = 'monprojet.wsgi.application'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'assistant',
-        'USER': 'root',        # Utilisateur MySQL
-        'PASSWORD': '',        # Mot de passe MySQL
-        'HOST': 'localhost',   # Hôte de la base de données
-        'PORT': '3306',        # Port par défaut pour MySQL
-    }
-    
+    'default': dj_database_url.config(
+        default=os.environ.get('DATABASE_URL'),
+        conn_max_age=600,
+        conn_health_checks=True
+    )
 }
-
-
-DATABASES['default']= dj_database_url.parse('postgresql://assistantdb_okzt_user:ylKXfaZtXsdsx8ou7a3L0slM6pSrdd6O@dpg-cvv8rmq4d50c73apq6og-a.oregon-postgres.render.com/assistantdb_okzt')
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
@@ -166,5 +159,3 @@ CSRF_COOKIE_HTTPONLY = True
 CSRF_COOKIE_SECURE = False  # Assurez-vous que cela est configuré correctement en fonction de votre environnement (True pour HTTPS).
 CSRF_COOKIE_NAME = 'csrftoken'
 
-
-django_heroku.settings(locals())
