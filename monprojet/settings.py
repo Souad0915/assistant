@@ -2,7 +2,8 @@ from pathlib import Path
 import django_heroku
 import pymysql
 from pathlib import Path
-
+import os
+import dj_database_url
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -11,12 +12,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-ieo_$5lnkb1=$1dt@d&glmz@d&3_%b4v)_00#fwe+bpb55_whd'
+SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get('DEBUG', 'false').lower()=='true'
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS').split(' ')
 
 
 # Application definition
@@ -44,7 +45,6 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'monprojet.urls'
 
-import os
 
 TEMPLATES = [
     {
@@ -80,8 +80,11 @@ DATABASES = {
         'HOST': 'localhost',   # Hôte de la base de données
         'PORT': '3306',        # Port par défaut pour MySQL
     }
+    
 }
 
+
+DATABASES['default']= dj_database_url.parse('postgresql://assistantdb_okzt_user:ylKXfaZtXsdsx8ou7a3L0slM6pSrdd6O@dpg-cvv8rmq4d50c73apq6og-a.oregon-postgres.render.com/assistantdb_okzt')
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
