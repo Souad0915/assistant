@@ -14,8 +14,7 @@ render_hostname = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
 if render_hostname:
     ALLOWED_HOSTS.append(render_hostname)
 
-# En cas d’hôte spécifique
-ALLOWED_HOSTS.append('assistant-9-ed4n.onrender.com')
+
 
 # Applications
 INSTALLED_APPS = [
@@ -63,8 +62,21 @@ WSGI_APPLICATION = 'monprojet.wsgi.application'
 
 # Base de données
 DATABASES = {
-    'default': dj_database_url.config(default=os.environ.get('DATABASE_URL'))
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'restaurant',
+        'USER': 'root',
+        'PASSWORD': '',
+        'HOST': 'localhost',
+        'PORT': '3306',
+        'OPTIONS': {
+            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+            'charset': 'utf8mb4',
+        },
+    }
 }
+
+DEBUG = True  # À n'utiliser qu'en développement
 
 # Validation des mots de passe
 AUTH_PASSWORD_VALIDATORS = [
